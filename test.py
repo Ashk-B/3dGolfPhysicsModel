@@ -1,6 +1,11 @@
+# test_sim.py
+
 from golf_physics.complete_golf_sim import CompleteGolfSim
 import math
 import matplotlib.pyplot as plt
+
+# Conversion factor from mph to m/s
+MPH_TO_MPS = 0.44704
 
 
 def main():
@@ -13,7 +18,10 @@ def main():
 
     # Gather user inputs (all in metric or SI units unless otherwise noted)
     try:
-        club_speed_mps = float(input("Club speed (m/s)? e.g. 45 => ~100 mph: "))
+        # Updated prompt to ask for club speed in mph
+        club_speed_mph = float(input("Club speed (mph)? e.g. 100: "))
+        # Convert mph to m/s for internal calculations
+        club_speed_mps = club_speed_mph * MPH_TO_MPS
         loft_deg = float(input("Club loft (degrees)? e.g. 10: "))
         face_angle_deg = float(input("Face angle (degrees)? negative=closed, e.g. -2: "))
         horizontal_offset_cm = float(input("Horizontal offset from center (cm)? e.g. 0 => center strike: "))
@@ -82,6 +90,7 @@ def main():
         roll_2d_yards = 0.0
 
     print("\n--- RESULTS ---")
+    print(f"Club Head Speed: {club_speed_mph:.2f} mph")
     print(f"Launch Angle (Vertical): {impact['launch_angle_vert']:.2f} degrees")
     print(f"Launch Angle (Horizontal): {impact['launch_angle_horiz']:.2f} degrees")
     print(f"Carry: {carry_2d_yards:.2f} yards")
@@ -132,6 +141,12 @@ def plot_full_path(flight_path_yards, roll_path_yards):
     ax1.set_ylabel('Y Position (yards)')
     ax1.set_zlabel('Z Position (yards)')
     ax1.legend()
+
+    # Mark apex
+    if flight_z:
+        apex_index = flight_z.index(max(flight_z))
+        ax1.scatter(flight_x[apex_index], flight_y[apex_index], flight_z[apex_index], color='red', s=50, label='Apex')
+        ax1.legend()
 
     # Plot Roll Path
     ax2 = fig.add_subplot(122)

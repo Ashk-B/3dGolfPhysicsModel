@@ -1,4 +1,4 @@
-from .impact_model import compute_impact
+from .impact_model import compute_impact, calculate_air_density
 from .flight_model import simulate_flight
 from .bounce_roll import simulate_bounce_and_roll
 
@@ -31,25 +31,25 @@ class CompleteGolfSim:
         # Impact defaults
         self.ball_compression_rating = 1.0
         self.base_cor = 0.83  # Coefficient of Restitution (adjust as needed)
-        self.base_smash_factor = 1.48
+        self.base_smash_factor = 1.5  # Updated to a standard value
 
         # Gear Ratios (Set based on club type in simulate_shot)
         self.vert_gear_rpm_cm = 80.0
         self.toe_gear_rpm_cm = 120.0
 
         # Flight
-        self.drag_base = 0.22
-        self.lift_base = 0.20
-        self.spin_decay_rate = 0.00002  # Slightly increased to allow some decay
-        self.flight_time_step = 0.05  # Increased for efficiency
-        self.flight_max_steps = 30000  # Further reduced for faster simulation
+        self.drag_base = 0.2  # Decreased from 0.25 to reduce air resistance
+        self.lift_base = 0.3  # Increased from 0.25 to enhance lift from backspin
+        self.spin_decay_rate = 0.000005  # Further reduced for slower spin decay
+        self.flight_time_step = 0.01  # Reduced for higher accuracy
+        self.flight_max_steps = 1000  # Adjusted for ~10-second simulation
 
         # Bounce & Roll
         self.ground_restitution = 0.40  # Decreased from 0.60 for more energy loss
         self.ground_friction = 0.35  # Increased from 0.20 to apply more deceleration
         self.spin_friction_factor = 0.001  # Further reduced to slow down spin decay
-        self.roll_time_step = 0.05  # Increased for efficiency
-        self.roll_max_steps = 5000  # Further reduced for faster simulation
+        self.roll_time_step = 0.01  # Reduced for higher accuracy
+        self.roll_max_steps = 2000  # Increased accordingly
 
     def set_gear_ratios(self, club_type: str):
         """
@@ -89,18 +89,7 @@ class CompleteGolfSim:
         Simulate a golf shot with specified parameters.
 
         Parameters:
-            club_speed_mps (float): Club speed in m/s.
-            club_loft_deg (float): Club loft angle in degrees.
-            club_face_angle_deg (float): Club face angle in degrees.
-            horizontal_offset_cm (float): Horizontal offset from center in cm.
-            vertical_offset_cm (float): Vertical offset from center in cm.
-            wind_speed_mps (float): Wind speed in m/s.
-            wind_dir_deg (float): Wind direction in degrees (0 = East).
-            temperature_c (float): Temperature in Celsius.
-            humidity (float): Relative humidity (0-1).
-            elevation_m (float): Elevation above sea level in meters.
-            surface_type (str): Type of surface (fairway, rough, green).
-            club_type (str): Type of club (driver, iron).
+            All parameters as previously defined.
 
         Returns:
             dict: Contains impact results, flight path, roll path, final position, distances, and final spin rates.
