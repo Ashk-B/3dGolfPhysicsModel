@@ -1,5 +1,6 @@
 import math
 
+
 def rpm_to_rad_s(rpm):
     """Convert Revolutions Per Minute to radians per second."""
     return rpm * (2 * math.pi) / 60
@@ -62,6 +63,13 @@ def compute_impact(
     if club_face_angle_deg == 0 and horizontal_offset_cm == 0:
         sidespin_rpm = 0.0
     else:
+        # Introduce sidespin based on face angle
+        # Positive face_angle_deg => Open Face => Left-to-Right sidespin
+        # Negative face_angle_deg => Closed Face => Right-to-Left sidespin
+        face_angle_factor = club_face_angle_deg / 10.0  # Example scaling factor
+        sidespin_rpm += face_angle_factor * 100.0  # Adjust the multiplier as needed
+
+        # Additionally, adjust based on horizontal offset
         sidespin_rpm += horizontal_offset_cm * sidespin_adjust_factor
 
     backspin_rpm += vertical_offset_cm * backspin_adjust_factor
@@ -71,7 +79,7 @@ def compute_impact(
     MAX_SIDESPIN_RPM = 5000
 
     backspin_rpm = min(backspin_rpm, MAX_BACKSPIN_RPM)
-    sidespin_rpm = min(sidespin_rpm, MAX_SIDESPIN_RPM)
+    sidespin_rpm = max(min(sidespin_rpm, MAX_SIDESPIN_RPM), -MAX_SIDESPIN_RPM)  # Allow negative sidespin
 
     # Debug: Print initial spin rates
     print(f"Initial Spin Rates -> Backspin: {backspin_rpm:.2f} RPM, Sidespin: {sidespin_rpm:.2f} RPM")

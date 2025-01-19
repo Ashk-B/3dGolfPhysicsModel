@@ -60,6 +60,7 @@ def main():
     roll_path_yards = result["roll_path_yards"]  # Renamed for consistency
     final_pos = result["final_position_yards"]
     final_spin = result["final_spin"]
+    impact = result["impact_result"]  # Extract impact result to get launch angles
 
     # Compute 2D distances in yards
     if len(flight_path) > 0:
@@ -81,6 +82,8 @@ def main():
         roll_2d_yards = 0.0
 
     print("\n--- RESULTS ---")
+    print(f"Launch Angle (Vertical): {impact['launch_angle_vert']:.2f} degrees")
+    print(f"Launch Angle (Horizontal): {impact['launch_angle_horiz']:.2f} degrees")
     print(f"Carry: {carry_2d_yards:.2f} yards")
     print(f"Roll:  {roll_2d_yards:.2f} yards")
     print(f"Total: {total_2d_yards:.2f} yards")
