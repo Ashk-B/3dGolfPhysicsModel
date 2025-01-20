@@ -32,15 +32,8 @@ def simulate_flight(
         time_step: float,
         max_steps: int
 ) -> list:
-    """
-    Simulate the flight of a golf ball until it lands.
 
-    Parameters:
-        All parameters as previously defined.
-
-    Returns:
-        list: Each element is a tuple containing (x, y, z, vx, vy, vz, backspin_rad_s, sidespin_rad_s).
-    """
+    # Simulate the flight of a golf ball until it lands.
     flight_path = []
 
     # Calculate air density

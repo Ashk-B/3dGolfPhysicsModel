@@ -8,32 +8,30 @@ METERS_TO_YARDS = 1.09361  # Conversion factor
 
 
 def rpm_to_rad_s(rpm):
-    """Convert Revolutions Per Minute to radians per second."""
+    #rpm to rad/s
     return rpm * (2 * math.pi) / 60
 
 
 def rad_s_to_rpm(rad_s):
-    """Convert radians per second to Revolutions Per Minute."""
+    #rad/s to rpm
     return rad_s * 60 / (2 * math.pi)
 
 
 class CompleteGolfSim:
-    """
-    Orchestrates the full shot: impact -> flight -> bounce/roll.
-    """
+    #ties in all models (impact -> flight -> bouce/roll)
 
     def __init__(self):
-        # Ball & Physics
+        # Ball & Physics constants
         self.ball_mass = 0.04593  # kg (standard golf ball mass)
         self.ball_radius = 0.02135  # meters (standard golf ball radius)
         self.gravity = 9.81  # m/s²
 
-        # Impact defaults
+        # Impact default parameters
         self.ball_compression_rating = 1.0
         self.base_cor = 0.83  # Coefficient of Restitution (adjust as needed)
         self.base_smash_factor = 1.5  # Updated to a standard value
 
-        # Gear Ratios (Set based on club type in simulate_shot)
+        # spin generation
         self.vert_gear_rpm_cm = 80.0
         self.toe_gear_rpm_cm = 120.0
 
@@ -45,16 +43,16 @@ class CompleteGolfSim:
         self.flight_max_steps = 1000  # Adjusted for ~10-second simulation
 
         # Bounce & Roll
-        self.ground_restitution = 0.40  # Decreased from 0.60 for more energy loss
-        self.ground_friction = 0.35  # Increased from 0.20 to apply more deceleration
-        self.spin_friction_factor = 0.001  # Further reduced to slow down spin decay
-        self.roll_time_step = 0.01  # Reduced for higher accuracy
+        self.ground_restitution = 0.40  # energy loss upon ball hitting ground
+        self.ground_friction = 0.35  # deceleration
+        self.spin_friction_factor = 0.001  # spin decay
+        self.roll_time_step = 0.01
         self.roll_max_steps = 2000  # Increased accordingly
 
     def set_gear_ratios(self, club_type: str):
-        """
-        Set gear ratios based on the club type.
+        #set spin generation for different club types
 
+        """
         Parameters:
             club_type (str): Type of club (driver, iron).
         """
@@ -85,17 +83,14 @@ class CompleteGolfSim:
             surface_type: str = "fairway",  # New parameter with default
             club_type: str = "iron"  # New parameter with default
     ) -> dict:
-        """
-        Simulate a golf shot with specified parameters.
 
-        Parameters:
-            All parameters as previously defined.
+        # Simulate a golf shot with specified parameters.
 
-        Returns:
-            dict: Contains impact results, flight path, roll path, final position, distances, and final spin rates.
-        """
 
-        # Set gear ratios based on club type
+        # Returns:
+            # dict: Contains impact results, flight path, roll path, final position, distances, and final spin rates.
+
+        # set spin rate from club type
         self.set_gear_ratios(club_type)
 
         # 1) Impact
@@ -173,7 +168,7 @@ class CompleteGolfSim:
                 bspin, sspin
             ))
 
-        # Convert roll_path from meters to yards
+        # Convert roll from meters to yards
         roll_path_yards = []
         final_state = last_flight
         if roll_path_m:

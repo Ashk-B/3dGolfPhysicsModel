@@ -1,8 +1,5 @@
-# test_sim.py
-
 from golf_physics.complete_golf_sim import CompleteGolfSim
 import math
-import matplotlib.pyplot as plt
 
 # Conversion factor from mph to m/s
 MPH_TO_MPS = 0.44704
@@ -81,9 +78,9 @@ def main():
     else:
         fx, fy, fz = cx, cy, cz
 
-    carry_2d_yards = math.sqrt((cx) ** 2 + (cy) ** 2)
+    carry_2d_yards = math.sqrt(cx ** 2 + cy ** 2)
     if roll_path_yards:
-        total_2d_yards = math.sqrt((fx) ** 2 + (fy) ** 2)
+        total_2d_yards = math.sqrt(fx ** 2 + fx ** 2)
         roll_2d_yards = total_2d_yards - carry_2d_yards
     else:
         total_2d_yards = carry_2d_yards
@@ -119,7 +116,6 @@ def plot_full_path(flight_path_yards, roll_path_yards):
         roll_path_yards (list): Roll path data in yards.
     """
     import matplotlib.pyplot as plt
-    from mpl_toolkits.mplot3d import Axes3D
 
     # Extract flight path data
     flight_x = [state[0] for state in flight_path_yards]

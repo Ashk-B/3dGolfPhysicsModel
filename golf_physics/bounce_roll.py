@@ -12,29 +12,14 @@ def simulate_bounce_and_roll(
         time_step: float,
         max_steps: int
 ) -> list:
-    """
-    Handle bounces & rolling friction with energy loss on each bounce.
-    Includes sliding before rolling if necessary.
 
-    Parameters:
-        last_flight_state (tuple): Last state from flight simulation (x, y, z, vx, vy, vz, bspin, sspin).
-        ball_mass (float): Mass of the golf ball in kg.
-        ball_radius (float): Radius of the golf ball in meters.
-        gravity (float): Acceleration due to gravity in m/s².
-        ground_restitution (float): Coefficient of restitution for ground bounces.
-        surface_type (str): Type of surface (fairway, rough, green).
-        ground_friction (float): Ground friction coefficient.
-        spin_friction_factor (float): Factor determining spin decay due to ground contact.
-        time_step (float): Simulation time step in seconds.
-        max_steps (int): Maximum number of simulation steps.
+    # Handle bounces & rolling friction with energy loss on each bounce
+    # Includes sliding before rolling if necessary.
 
-    Returns:
-        list: Each element is a tuple containing (x, y, z, vx, vy, vz, backspin_rad_s, sidespin_rad_s).
-    """
     roll_path = []
     xg, yg, zg, vxg, vyg, vzg, bspin, sspin = last_flight_state
 
-    # Define friction and restitution based on surface type
+    # define friction and restitution based on surface type
     surface_properties = {
         "fairway": {"friction": 0.35, "restitution": 0.40},
         "rough": {"friction": 0.30, "restitution": 0.35},

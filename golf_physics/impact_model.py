@@ -1,12 +1,12 @@
 import math
 
 def rpm_to_rad_s(rpm):
-    """Convert Revolutions Per Minute to radians per second."""
+    # Convert Revolutions Per Minute to radians per second
     return rpm * (2 * math.pi) / 60
 
 
 def rad_s_to_rpm(rad_s):
-    """Convert radians per second to Revolutions Per Minute."""
+    # convert radians per second to Revolutions Per Minute
     return rad_s * 60 / (2 * math.pi)
 
 
@@ -22,15 +22,8 @@ def compute_impact(
         toe_gear_rpm_cm: float,
         vert_gear_rpm_cm: float
 ) -> dict:
-    """
-    Compute the initial conditions of the golf ball after impact.
+    # initial conditions of the golf ball after impact
 
-    Parameters:
-        All parameters as previously defined.
-
-    Returns:
-        dict: Contains launch speed, launch angles, and spin rates.
-    """
     # Calculate ball speed using smash factor
     launch_speed = club_speed_mps * base_smash_factor
 
@@ -38,36 +31,36 @@ def compute_impact(
     print(f"Launch Speed: {launch_speed:.2f} m/s")
 
     # Calculate launch angles
-    launch_angle_vert = club_loft_deg  # Adjust based on angle of attack if necessary
+    launch_angle_vert = club_loft_deg  # add calculation with respect to angle of attack
     launch_angle_horiz = club_face_angle_deg
 
     # Calculate spin rates based on gear ratios and offsets
-    loft_factor = (club_loft_deg / 10.0)  # Example scaling factor
+    loft_factor = (club_loft_deg / 10.0)  # change to also take into account angle of attack
 
     backspin_rpm = (club_speed_mps * vert_gear_rpm_cm * loft_factor) / ball_compression_rating
     sidespin_rpm = (club_speed_mps * toe_gear_rpm_cm * loft_factor) / ball_compression_rating
 
     # Adjust spin rates based on offsets
-    backspin_adjust_factor = 1.0  # Reduced from 2.0 to prevent excessive spin
-    sidespin_adjust_factor = 0.5  # Reduced from 1.0 to prevent excessive spin
+    backspin_adjust_factor = 1.0
+    sidespin_adjust_factor = 0.5
 
-    # If face is square and offsets are zero, eliminate sidespin
+    # If face is perfectly square and offsets are zero, no sidespin
     if club_face_angle_deg == 0 and horizontal_offset_cm == 0:
         sidespin_rpm = 0.0
     else:
-        # Introduce sidespin based on face angle
-        # Positive face_angle_deg => Open Face => Left-to-Right sidespin
-        # Negative face_angle_deg => Closed Face => Right-to-Left sidespin
-        face_angle_factor = club_face_angle_deg / 10.0  # Example scaling factor
-        sidespin_rpm += face_angle_factor * 200.0  # Adjust the multiplier as needed
+        # sidespin based on face angle
+        # Open Face makes left-to-right sidespin
+        # Closed Face makes right-to-left sidespin
+        face_angle_factor = club_face_angle_deg / 10.0
+        sidespin_rpm += face_angle_factor * 200.0
 
-        # Additionally, adjust based on horizontal offset
+        # adjust based on horizontal offset
         sidespin_rpm += horizontal_offset_cm * sidespin_adjust_factor
 
     backspin_rpm += vertical_offset_cm * backspin_adjust_factor
 
     # Cap spin rates to realistic maximums
-    MAX_BACKSPIN_RPM = 6000  # Upper limit for irons
+    MAX_BACKSPIN_RPM = 50000  # Upper limit for irons
     MAX_SIDESPIN_RPM = 3000  # Reduced for more realistic sidespin
 
     backspin_rpm = min(backspin_rpm, MAX_BACKSPIN_RPM)
@@ -86,18 +79,8 @@ def compute_impact(
 
 
 def calculate_air_density(temperature_c, humidity, elevation_m):
-    """
-    Calculate air density based on temperature, humidity, and elevation using the ideal gas law.
+    # calculate air density based on temperature, humidity, and elevation using the ideal gas law
 
-    Parameters:
-        temperature_c (float): Temperature in Celsius.
-        humidity (float): Relative humidity (0-1).
-        elevation_m (float): Elevation above sea level in meters.
-
-    Returns:
-        float: Air density in kg/m³.
-    """
-    # Constants
     R_d = 287.05  # J/(kg·K) for dry air
     R_v = 461.495  # J/(kg·K) for water vapor
     T = temperature_c + 273.15  # Convert to Kelvin
