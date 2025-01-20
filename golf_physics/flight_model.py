@@ -35,7 +35,7 @@ def simulate_flight(
 
     # Simulate the flight of a golf ball until it lands.
     flight_path = []
-
+    #take into account the coanda effect
     # Calculate air density
     rho = calculate_air_density(temperature_c, humidity, elevation_m)
     print(f"Air Density: {rho:.4f} kg/m³")

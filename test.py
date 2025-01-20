@@ -9,8 +9,7 @@ def main():
     # Create an instance of the simulation
     sim = CompleteGolfSim()
 
-    print("Custom Golf Shot Simulator")
-    print("--------------------------")
+    print("Custom Golf Shot Simulator \n")
     print("Enter your shot parameters below:\n")
 
     # Gather user inputs (all in metric or SI units unless otherwise noted)
