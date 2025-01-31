@@ -1,39 +1,37 @@
-import numpy as np
+# cli.py (updated interface)
+from physics import *
 import matplotlib.pyplot as plt
-from golf_sim.simulator import GolfShotSimulator
 
 
 def get_input():
-    print("=== Golf Shot Simulator ===")
+    print("=== Advanced Golf Simulator ===")
+    print("Available clubs:", ", ".join(CLUB_LOFTS.keys()))
     return {
-        "club_speed": float(input("Club speed (m/s): ")),
-        "loft_deg": float(input("Loft (deg): ")),
-        "attack_angle_deg": float(input("Angle of attack (deg): ")),
-        "swing_path_deg": float(input("Swing path (deg): ")),
+        "club_type": input("Club type: ").lower().strip(),
+        "club_speed_mph": float(input("Club speed (mph): ")),
+        "attack_angle": float(input("Angle of attack (deg): ")),
         "strike_offset_mm": float(input("Strike offset (mm): ")),
-        "wind_speed": float(input("Wind speed (m/s): ")),
+        "wind_speed": float(input("Wind speed (mph): ")),
         "wind_dir": float(input("Wind direction (deg): ")),
-        "surface": input("Surface [fairway/rough/green]: ").lower()
     }
 
 
 def plot_results(trajectory):
-    fig = plt.figure(figsize=(12, 6))
+    yards = [meters_to_yards(p[0]) for p in trajectory]
+    heights = [meters_to_yards(p[2]) for p in trajectory]
 
-    # 3D plot
-    ax1 = fig.add_subplot(121, projection='3d')
-    ax1.plot(trajectory[:, 0], trajectory[:, 1], trajectory[:, 2])
-    ax1.set_title("3D Trajectory")
-    ax1.set_xlabel("Distance (m)")
-    ax1.set_ylabel("Lateral (m)")
-    ax1.set_zlabel("Height (m)")
+    plt.figure(figsize=(12, 6))
+    plt.subplot(121)
+    plt.plot(yards, heights)
+    plt.xlabel("Distance (yards)")
+    plt.ylabel("Height (yards)")
+    plt.title("Ball Flight")
 
-    # Top-down view
-    ax2 = fig.add_subplot(122)
-    ax2.plot(trajectory[:, 0], trajectory[:, 1])
-    ax2.set_title("Top-Down View")
-    ax2.set_xlabel("Distance (m)")
-    ax2.set_ylabel("Lateral (m)")
+    plt.subplot(122)
+    plt.plot(yards, [meters_to_yards(p[1]) for p in trajectory])
+    plt.xlabel("Distance (yards)")
+    plt.ylabel("Lateral (yards)")
+    plt.title("Shot Shape")
 
     plt.tight_layout()
     plt.show()
@@ -42,24 +40,31 @@ def plot_results(trajectory):
 def main():
     params = get_input()
 
-    # Convert wind to vector
-    wind_dir = np.radians(params["wind_dir"])
-    params["wind"] = params["wind_speed"] * np.array([
-        np.cos(wind_dir),
-        np.sin(wind_dir),
-        0
-    ])
+    try:
+        vel, spin = calculate_launch_conditions(
+            params["club_speed_mph"],
+            params["club_type"],
+            params["attack_angle"],
+            params["strike_offset_mm"]
+        )
+    except KeyError:
+        print(f"Error: Invalid club type '{params['club_type']}'")
+        return
 
-    # Run simulation
-    simulator = GolfShotSimulator(surface=params["surface"])
-    results = simulator.simulate_shot(params)
+    carry, roll, total = simulate_full_shot(
+        vel, spin,
+        params["wind_speed"],
+        params["wind_dir"]
+    )
 
-    # Display results
-    print(f"\nCarry Distance: {results['carry']:.1f}m")
-    print(f"Total Distance: {results['total']:.1f}m")
-    print(f"Final Spin: {results['spin'][2]:.0f} RPM (backspin)")
+    print("\n=== Shot Analysis ===")
+    print(f"Carry: {carry:.1f} yards")
+    print(f"Bounce/Roll: {roll:.1f} yards")
+    print(f"Total Distance: {total:.1f} yards")
 
-    plot_results(results["trajectory"])
+    # Plot full trajectory
+    trajectory = simulate_trajectory(vel, spin, params["wind_speed"], params["wind_dir"])
+    plot_results(trajectory)
 
 
 if __name__ == "__main__":
