@@ -1,6 +1,6 @@
 import numpy as np
-from .physics import *
-from .constants import *
+from physics import *
+from constants import *
 
 
 class GolfShotSimulator:

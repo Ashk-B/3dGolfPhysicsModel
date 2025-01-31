@@ -1,5 +1,5 @@
 # cli.py (updated interface)
-from physics import *
+from physics.py import *
 import matplotlib.pyplot as plt
 
 
